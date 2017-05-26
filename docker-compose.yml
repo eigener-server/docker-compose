@@ -1,0 +1,54 @@
+version: '2'
+services:
+
+#Je nach Leistung des Hostsystems kann es bis zu 2 Minuten dauern bis beim ersten Start alles eingerichtet ist.
+#'docker logs $(docker ps | grep _nextcloud_1 | awk "{print \$1}")' zeigt:
+#'SQLSTATE[HY000] [2002] Connection refused' solange bis die DB eingerichtet ist und:
+#'Nextcloud is not installed' wenn Nextcloud eingerichtet wird und:
+#'Command line: /usr/sbin/apache2 -D FOREGROUND' sobald Nextcloud läuft.
+
+ nextcloud:
+  image: eigenerserver/nextcloud:0.1.2
+  restart: always
+  links:
+    - mariadb:mysql
+    - redis:redis
+  volumes:
+    - /srv/docker/eigener-server.ch/nextcloud:/host/nextcloud
+  environment:
+    # Achtung bei Sonderzeichen im User / Passwort. Es sind nicht alle erlaubt.
+    - NEXTCLOUD_DB_NAME=eigenerserver
+    - NEXTCLOUD_DB_USER=eigenerserver
+    - NEXTCLOUD_DB_PASSWORD=eigenerserver
+    - NEXTCLOUD_DOMAIN=eigener-server.ch
+    #- NEXTCLOUD_DOMAIN=192.168.1.97
+    - NEXTCLOUD_ADMIN_PASSWORD=eigenerserver
+
+ mariadb:
+  image: eigenerserver/mariadb:0.1.0
+  restart: always
+  volumes:
+    - /srv/docker/eigener-server.ch/mariadb:/host/mariadb
+  environment:
+    # Achtung bei Sonderzeichen im User / Passwort. Es sind nicht alle erlaubt.
+    - MARIADB_DATABASE=eigenerserver
+    - MARIADB_USER=eigenerserver
+    - MARIADB_PASS=eigenerserver
+
+ redis:
+  image: eigenerserver/redis:0.1.0
+  restart: always
+
+ haproxy:
+  image: eigenerserver/haproxy:0.1.2
+  restart: always
+  links:
+    - nextcloud:nextcloud
+  ports:
+   - 80:80
+   - 443:443
+   - 1936:1936
+  volumes:
+   - /srv/docker/eigener-server.ch/haproxy:/host/haproxy
+
+
