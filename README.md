@@ -8,6 +8,16 @@ sed -i -e "s#192.168.1.97#YOUR-SERVER-IP_or_DOMAIN#g" docker-compose.yml
 ./up
 ```
 
+### Parts of the Hedgehog cloud
+* nextcloud www.nextcloud.com
+* lektor with admin panel www.getlektor.com
+* apache servs your Lektor homepage
+* haproxy
+* mariadb
+* redis
+* letsencrypt for certificates (coming soon)
+* wordpress as alternative for lektor (coming soon)
+
 ### License of the Hedgehog Cloud
 
 You may duplicate and redistribute the material in any format or medium as well as refix, alter, and build
