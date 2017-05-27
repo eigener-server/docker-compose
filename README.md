@@ -1,3 +1,12 @@
+### Quick Start of the Hedgehog Cloud
+   cd /srv
+   git clone https://github.com/eigener-server/docker-compose.git eigener-server.ch
+   cd eigener-server.ch
+   sed -i -e "s#192.168.1.0/24#YOUR-REMOTE-ADMIN-ACCESS-IP/SUBNET#g" docker-compose.yml
+   sed -i -e "s#192.168.1.97#YOUR-SERVER-IP_or_DOMAIN#g" docker-compose.yml
+   ./up
+
+
 ### License of the Hedgehog Cloud
 
 You may duplicate and redistribute the material in any format or medium as well as refix, alter, and build

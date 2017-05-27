@@ -8,47 +8,86 @@ services:
 #'Command line: /usr/sbin/apache2 -D FOREGROUND' sobald Nextcloud läuft.
 
  nextcloud:
-  image: eigenerserver/nextcloud:0.1.3
+  image: eigenerserver/nextcloud:0.1.4
   restart: always
   links:
     - mariadb:mysql
     - redis:redis
+  networks:
+    - frontend
+    - backend
   volumes:
-    - /srv/docker/eigener-server.ch/nextcloud:/host/nextcloud
+    - ./nextcloud:/host/nextcloud
   environment:
     # Achtung bei Sonderzeichen im User / Passwort. Es sind nicht alle erlaubt.
-    - NEXTCLOUD_DB_NAME=eigenerserver
-    - NEXTCLOUD_DB_USER=eigenerserver
-    - NEXTCLOUD_DB_PASSWORD=eigenerserver
-    - NEXTCLOUD_DOMAIN=eigener-server.ch
-    #- NEXTCLOUD_DOMAIN=192.168.1.97
-    - NEXTCLOUD_ADMIN_PASSWORD=eigenerserver
+    - NEXTCLOUD_DB_NAME=eigenerserverch
+    - NEXTCLOUD_DB_USER=eigenerserverch
+    - NEXTCLOUD_DB_PASSWORD=eigener-server.ch
+    #- NEXTCLOUD_DOMAIN=eigener-server.ch
+    - NEXTCLOUD_DOMAIN=192.168.1.97
+    - NEXTCLOUD_ADMIN_PASSWORD=eigener-server.ch
 
  mariadb:
   image: eigenerserver/mariadb:0.1.0
   restart: always
+  networks:
+    - backend
   volumes:
-    - /srv/docker/eigener-server.ch/mariadb:/host/mariadb
+    - ./mariadb:/host/mariadb
   environment:
     # Achtung bei Sonderzeichen im User / Passwort. Es sind nicht alle erlaubt.
-    - MARIADB_DATABASE=eigenerserver
-    - MARIADB_USER=eigenerserver
-    - MARIADB_PASS=eigenerserver
+    - MARIADB_DATABASE=eigenerserverch
+    - MARIADB_USER=eigenerserverch
+    - MARIADB_PASS=eigener-server.ch
 
  redis:
   image: eigenerserver/redis:0.1.0
   restart: always
+  networks:
+    - backend
+
+ webserver:
+  image: eigenerserver/apache2:0.1.2
+  restart: always
+  networks:
+    - frontend
+  volumes:
+    - ./lektor/html:/var/www/html
+
+ lektor:
+  image: eigenerserver/lektor:0.1.0
+  restart: always
+  networks:
+   - frontend
+  volumes:
+    - ./lektor:/host/lektor
 
  haproxy:
-  image: eigenerserver/haproxy:0.1.3
+  image: eigenerserver/haproxy:0.1.4
   restart: always
   links:
     - nextcloud:nextcloud
+    - webserver:webserver
+    - lektor:lektor
   ports:
-   - 80:80
-   - 443:443
-   - 1936:1936
+    - 80:80
+    - 443:443
+    - 1936:1936
+    - 5000:5000
+  networks:
+    - frontend
   volumes:
-   - /srv/docker/eigener-server.ch/haproxy:/host/haproxy
+    - ./haproxy:/host/haproxy
+  environment:
+    # Achtung bei Sonderzeichen im User / Passwort. Es sind nicht alle erlaubt.
+    - HAPROXY_ADMIN_USER=admin
+    - HAPROXY_ADMIN_PASSWORD=eigener-server.ch
+    - HAPROXY_ADMIN_USER_IP=192.168.1.0/24
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
 
 
