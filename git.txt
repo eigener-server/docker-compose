@@ -5,7 +5,9 @@ git commit -m "Kommentar"
 git push origin master
 
 #git tag
-git tag -a 0.1.0 a7fd16b -m "Kommentar"
+git tag -a 1.0.0 398ae0d -m "Kommentar"
+git tag -a 1.0 398ae0d -m "Version 1.0.0"
+git tag -a 1 398ae0d -m "Version 1.0.0"
 git push --tags origin master
 
 

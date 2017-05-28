@@ -1,14 +1,19 @@
 version: '2'
 services:
 
-#Je nach Leistung des Hostsystems kann es bis zu 2 Minuten dauern bis beim ersten Start alles eingerichtet ist.
-#'docker logs $(docker ps | grep _nextcloud_1 | awk "{print \$1}")' zeigt:
-#'SQLSTATE[HY000] [2002] Connection refused' solange bis die DB eingerichtet ist und:
-#'Nextcloud is not installed' wenn Nextcloud eingerichtet wird und:
-#'Command line: /usr/sbin/apache2 -D FOREGROUND' sobald Nextcloud läuft.
+# Hedgehog Cloud by www.eigener-server.ch https://www.eigener-server.ch/en/igel-cloud \
+# is licensed under a Creative Commons Attribution 4.0 International Lizenz \
+# http://creativecommons.org/licenses/by/4.0/ \
+# To remove the links visit https://www.eigener-server.ch/en/igel-cloud"
+
+# Depending on the system it could take up to two minutes until everything ist up. 
+# 'docker logs $(docker ps | grep _nextcloud_1 | awk "{print \$1}")' shows:
+# 'SQLSTATE[HY000] [2002] Connection refused' until mariadb is running
+# 'Nextcloud is not installed' during the nextcloud setup
+# 'Command line: /usr/sbin/apache2 -D FOREGROUND' after nextcloud is running
 
  nextcloud:
-  image: eigenerserver/nextcloud:0.1.4
+  image: eigenerserver/nextcloud:1.0
   restart: always
   links:
     - mariadb:mysql
@@ -28,12 +33,12 @@ services:
     - NEXTCLOUD_ADMIN_PASSWORD=eigener-server.ch
 
  mariadb:
-  image: eigenerserver/mariadb:0.1.0
+  image: eigenerserver/mariadb:1.0
   restart: always
   networks:
     - backend
   volumes:
-    - ./mariadb:/host/mariadb
+    - ./nextcloud_db:/host/mariadb
   environment:
     # Achtung bei Sonderzeichen im User / Passwort. Es sind nicht alle erlaubt.
     - MARIADB_DATABASE=eigenerserverch
@@ -41,13 +46,13 @@ services:
     - MARIADB_PASS=eigener-server.ch
 
  redis:
-  image: eigenerserver/redis:0.1.0
+  image: eigenerserver/redis:1.0
   restart: always
   networks:
     - backend
 
  webserver:
-  image: eigenerserver/apache2:0.1.2
+  image: eigenerserver/apache2:1.0
   restart: always
   networks:
     - frontend
@@ -55,7 +60,7 @@ services:
     - ./lektor/html:/var/www/html
 
  lektor:
-  image: eigenerserver/lektor:0.1.0
+  image: eigenerserver/lektor:1.0
   restart: always
   networks:
    - frontend
@@ -63,7 +68,7 @@ services:
     - ./lektor:/host/lektor
 
  haproxy:
-  image: eigenerserver/haproxy:0.1.4
+  image: eigenerserver/haproxy:1.0
   restart: always
   links:
     - nextcloud:nextcloud

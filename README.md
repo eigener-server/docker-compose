@@ -8,6 +8,8 @@ sed -i -e "s#192.168.1.97#YOUR-SERVER-IP_or_DOMAIN#g" docker-compose.yml
 ./up
 ```
 
+[Howto](https://www.eigener-server.ch/en/igel-cloud)
+
 ### Parts of the Hedgehog cloud
 * nextcloud www.nextcloud.com
 * lektor with admin panel www.getlektor.com
@@ -36,24 +38,55 @@ You can send your payments via Paypal to the following address: igel-cloud@nexto
 Please note the URL of the website, where the hedgehog cloud is used, as a remark with the Paypal Payment.
 Keep your Paypal receipt as proof of payment.
 
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-<img alt="Creative Commons Lizenzvertrag" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
-</a>
+![Creative Commons Lizenzvertrag](https://i.creativecommons.org/l/by/4.0/80x15.png)
 
-Hedgehog Cloud by <a rel="license" href="https://www.eigener-server.ch/en/igel-cloud">www.eigener-server.ch</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Namensnennung 4.0 International Lizenz</a>.
+Hedgehog Cloud by [www.eigener-server.ch](https://www.eigener-server.ch/en/igel-cloud)  is licensed under a [Creative Commons Namensnennung 4.0 International Lizenz](href="http://creativecommons.org/licenses/by/4.0/).
 
 
+### Information for Nextcloud
+Please set up your domain to access your Nextcloud (https://yourdomain.ch). 
+'''
+    - NEXTCLOUD_DOMAIN=eigener-server.ch
+'''
+In case you are comnnecting to the IP of the server (https://192.168.1.79) set your Domain with the IP.
+'''
+    - NEXTCLOUD_DOMAIN=192.168.1.97
+'''
 
-# docker-compose Nextcloud
+Depending on the system it could take up to two minutes until everything ist up.
+'''
+'docker logs $(docker ps | grep _nextcloud_1 | awk "{print \$1}")' shows:
+'SQLSTATE[HY000] [2002] Connection refused' until mariadb is running
+'Nextcloud is not installed' during the nextcloud setup
+'Command line: /usr/sbin/apache2 -D FOREGROUND' after nextcloud is running
+'''
 
-Je nach Leistung des Hostsystems kann es bis zu 2 Minuten dauern bis beim ersten Start alles eingerichtet ist.
+### Information for HAPROXY
+Please set up the IP of your notebook / home network. In case you connect via public IP then the public IP 
+of your router is needed to connect to the admin Panel from haproxy and the admin panel from lektor.
 
-'docker logs $(docker ps | grep _nextcloud_1 | awk "{print \$1}")' zeigt:
+You could for a test setup also use '0.0.0.0/0' to allow everything. Be carefull because this is not secure.
 
-'SQLSTATE[HY000] [2002] Connection refused' solange bis die DB eingerichtet ist und:
+'''
+    - HAPROXY_ADMIN_USER_IP=192.168.1.0/24
+'''
 
-'Nextcloud is not installed' wenn Nextcloud eingerichtet wird und:
+### Version Control
 
-'Command line: /usr/sbin/apache2 -D FOREGROUND' sobald Nextcloud läuft.
+1.1.1 Version Format
 
-# docker-compose
+1     The first digit will count up if a major Version of the source changes for example PHP Version 7.0 to 7.1 or
+Nextcloud Version 11 to 12 or the structure from the host directory changes.
+1.1   The second digit will count up if the new setup might affect your system / should be tested by you after update.
+1.1.1 The third digit will count up for small changes / small update of the source. Should not impact your system.
+
+### Release Management
+
+1.0.0 First productive release
+0.x.x Development release
+
+### FAQ
+Can I be sure that the Version on Github is the same as on Docker?
+*Yes. Docker is set up for automatic build. After a new Version is pushed to github docker will be informed from github
+and does a pull from the source and generates the Image*
+
