@@ -4,8 +4,11 @@ cd /srv
 git clone https://github.com/eigener-server/docker-compose.git eigener-server.ch
 cd eigener-server.ch
 sed -i -e "s#192.168.1.0/24#YOUR-REMOTE-ADMIN-ACCESS-IP/SUBNET#g" docker-compose.yml
-sed -i -e "s#192.168.1.97#YOUR-SERVER-IP_or_DOMAIN#g" docker-compose.yml
+sed -i -e "s#192.168.1.97#YOUR-SERVER-IP_or_YOUR-DOMAIN#g" docker-compose.yml
 ./up
+docker exec eigenerserverch_letsencrypt_1 cert.sh staging YOUR-EMAIL YOUR-DOMAIN www.YOUR-DOMAIN
+docker exec eigenerserverch_letsencrypt_1 cert.sh YOUR-EMAIL YOUR-DOMAIN www.YOUR-DOMAIN
+docker restart eigenerserverch_haproxy_1
 ```
 
 [Howto](https://www.eigener-server.ch/en/igel-cloud)

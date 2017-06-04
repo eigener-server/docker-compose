@@ -6,9 +6,11 @@ git push origin master
 
 #git tag
 git tag -a 1.0.0 398ae0d -m "Kommentar"
-git tag -a 1.0 398ae0d -m "Version 1.0.0"
-git tag -a 1 398ae0d -m "Version 1.0.0"
 git push --tags origin master
+git tag --force 1.0 fae28e0 -m "Version 1.0.2"
+git tag --force 1 fae28e0 -m "Version 1.0.2"
+git push --force --tags
+
 
 
 #git init

@@ -16,7 +16,7 @@ services:
   image: eigenerserver/nextcloud:1.0
   restart: always
   links:
-    - mariadb:mysql
+    - nextcloud_db:mysql
     - redis:redis
   networks:
     - frontend
@@ -32,7 +32,7 @@ services:
     - NEXTCLOUD_DOMAIN=192.168.1.97
     - NEXTCLOUD_ADMIN_PASSWORD=eigener-server.ch
 
- mariadb:
+ nextcloud_db:
   image: eigenerserver/mariadb:1.0
   restart: always
   networks:
@@ -51,6 +51,9 @@ services:
   networks:
     - backend
 
+ ###################################################################
+ # Lektor Webserver Version
+ ###################################################################
  webserver:
   image: eigenerserver/apache2:1.0
   restart: always
@@ -66,6 +69,59 @@ services:
    - frontend
   volumes:
     - ./lektor:/host/lektor
+ ###################################################################
+
+ ###################################################################
+ # Apache / PHP Webserver Version
+ ###################################################################
+ #webserver:
+ # image: eigenerserver/apache2:1.0
+ # restart: always
+ # networks:
+ #   - frontend
+ # volumes:
+ #   - ./webserver/html:/var/www/html
+ ###################################################################
+
+ ###################################################################
+ # Wordpress Webserver Version
+ ###################################################################
+ #wordpress_db:
+ # image: eigenerserver/mariadb:1.0
+ # restart: always
+ # networks:
+ #   - backend_wordpress
+ # volumes:
+ #   - ./wordpress_db:/host/mariadb
+ # environment:
+ #   - MARIADB_DATABASE=wordpress
+ #   - MARIADB_USER=eigenerserverch
+ #   - MARIADB_PASS=eigener-server.ch
+ #
+ #webserver:
+ # image: wordpress:4.7-php7.0-apache
+ # restart: always
+ # links:
+ #   - wordpress_db:mysql
+ # networks:
+ #   - frontend
+ #   - backend_wordpress
+ # volumes:
+ #   - ./wordpress:/var/www
+ # environment:
+ #  - WORDPRESS_DB_USER=eigenerserverch
+ #  - WORDPRESS_DB_PASSWORD=eigener-server.ch
+ #  - WORDPRESS_DB_NAME=wordpress
+ ###################################################################
+
+ letsencrypt:
+  image: eigenerserver/letsencrypt:0.1
+  restart: always
+  networks:
+    - frontend
+  volumes:
+    - ./letsencrypt:/etc/letsencrypt
+    - ./haproxy/certs:/host/letsencrypt/certs/pem
 
  haproxy:
   image: eigenerserver/haproxy:1.0
@@ -73,6 +129,8 @@ services:
   links:
     - nextcloud:nextcloud
     - webserver:webserver
+    - letsencrypt:letsencrypt
+    # The following link need to be removed if you don't use lektor
     - lektor:lektor
   ports:
     - 80:80
