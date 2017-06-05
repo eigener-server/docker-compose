@@ -21,8 +21,8 @@ docker restart eigenerserverch_haproxy_1
 * haproxy
 * mariadb
 * redis
-* letsencrypt for certificates (coming soon)
-* wordpress as alternative for lektor (coming soon)
+* letsencrypt for certificates
+* wordpress as alternative for lektor
 
 ### License of the Hedgehog Cloud
 
