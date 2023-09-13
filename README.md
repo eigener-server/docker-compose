@@ -1,8 +1,27 @@
+# Hedgehog Cloud
+
+## Versions
+
+v1: small single server version with docker compose (old release)
+
+v2: multi server Version with monitoring, logging, zero trust and erp (future release)
+
+v3: kubernetes Version (planned)
+
+v4: SaaS (planned)
+
+
+## v1 -> see branch 1.0.1
+
+### open tasks
+[] update containers to new versions / to the official docker images
+
 ### Quick Start of the Hedgehog Cloud
 ```
 cd /srv
 git clone https://github.com/eigener-server/docker-compose.git eigener-server.ch
 cd eigener-server.ch
+git checkout 1.0.1
 sed -i -e "s#192.168.1.0/24#YOUR-REMOTE-ADMIN-ACCESS-IP/SUBNET#g" docker-compose.yml
 sed -i -e "s#192.168.1.97#YOUR-SERVER-IP_or_YOUR-DOMAIN#g" docker-compose.yml
 ./up
@@ -94,3 +113,6 @@ Can I be sure that the Version on Github is the same as on Docker?
 *Yes. Docker is set up for automatic build. After a new Version is pushed to github docker will be informed from github
 and does a pull from the source and generates the Image*
 
+## v2
+
+todo
